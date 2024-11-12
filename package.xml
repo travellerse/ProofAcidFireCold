@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Meta>
+	<title>Proof Acid Fire</title>
+	<id>ProofAcidFire</id>
+	<author>travellerse</author>
+	<builtin>true</builtin>
+	<loadPriority>100</loadPriority>
+	<version>0.23.17</version>
+	<description>
+		Proof Acid Fire
+	</description>
+</Meta>
