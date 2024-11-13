@@ -7,8 +7,8 @@
     <ProjectGuid>{E590648E-DE47-4FF3-BA29-FE8AE21B8956}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ProofAcidFire</RootNamespace>
-    <AssemblyName>ProofAcidFire</AssemblyName>
+    <RootNamespace>ProofAcidFireCold</RootNamespace>
+    <AssemblyName>ProofAcidFireCold</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -65,7 +65,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ProofAcidFire.cs" />
+    <Compile Include="ProofAcidFireCold.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

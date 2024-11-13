@@ -2,21 +2,21 @@
 using BepInEx.Logging;
 using HarmonyLib;
 
-namespace ProofAcidFire
+namespace ProofAcidFireCold
 {
-    [BepInPlugin("com.travellerse.plugins.ProofAcidFire", "Proof Acid Fire", "0.1.0.0")]
+    [BepInPlugin("com.travellerse.plugins.ProofAcidFireCold", "Proof Acid Fire Cold", "0.1.0.0")]
     [BepInProcess("Elin.exe")]
-    public class ProofAcidFire : BaseUnityPlugin
+    public class ProofAcidFireCold : BaseUnityPlugin
     {
         public static new ManualLogSource Logger;
         void Awake()
         {
             Logger = base.Logger;
-            Harmony harmony = new Harmony("com.travellerse.plugins.ProofAcidFire");
-            Logger.LogInfo("ProofAcidFire loaded");
+            Harmony harmony = new Harmony("com.travellerse.plugins.ProofAcidFireCold");
+            Logger.LogInfo("ProofAcidFireCold loaded");
             harmony.PatchAll();
-            Logger.LogInfo("ProofAcidFire patched");
-            Logger.LogInfo("ProofAcidFire ready");
+            Logger.LogInfo("ProofAcidFireCold patched");
+            Logger.LogInfo("ProofAcidFireCold ready");
         }
     }
 
@@ -49,7 +49,7 @@ namespace ProofAcidFire
                 if (pos.IsSync)
                 {
                     Msg.Say((pos.HasChara ? "blanketInv_" : "blanketGround_") + element.source.alias, "Mod", pos.FirstChara?.ToString(), null, null);
-                    ProofAcidFire.Logger.LogInfo((pos.HasChara ? "blanketInv_" : "blanketGround_") + element.source.alias);
+                    ProofAcidFireCold.Logger.LogInfo((pos.HasChara ? "blanketInv_" : "blanketGround_") + element.source.alias);
                 }
                 return false;
             }

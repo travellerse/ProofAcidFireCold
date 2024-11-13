@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Meta>
-	<title>Proof Acid Fire</title>
-	<id>ProofAcidFire</id>
+	<title>Proof Acid Fire Cold</title>
+	<id>ProofAcidFireCold</id>
 	<author>travellerse</author>
 	<builtin>true</builtin>
 	<loadPriority>100</loadPriority>

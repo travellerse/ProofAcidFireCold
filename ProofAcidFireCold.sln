@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProofAcidFire", "ProofAcidFire.csproj", "{E590648E-DE47-4FF3-BA29-FE8AE21B8956}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProofAcidFireCold", "ProofAcidFireCold.csproj", "{E590648E-DE47-4FF3-BA29-FE8AE21B8956}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
