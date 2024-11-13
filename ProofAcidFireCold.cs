@@ -39,7 +39,7 @@ namespace ProofAcidFireCold
     }
 
     [HarmonyPatch(typeof(Map), "TryShatter")]
-    public static class ProofAcidFirePatch
+    public static class ProofColdPatch
     {
         private static bool Prefix(Point pos, int ele, int power)
         {
