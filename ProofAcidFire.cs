@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using BepInEx.Logging;
 using HarmonyLib;
 
 namespace ProofAcidFire
@@ -7,8 +8,10 @@ namespace ProofAcidFire
     [BepInProcess("Elin.exe")]
     public class ProofAcidFire : BaseUnityPlugin
     {
+        public static new ManualLogSource Logger;
         void Awake()
         {
+            Logger = base.Logger;
             Harmony harmony = new Harmony("com.travellerse.plugins.ProofAcidFire");
             Logger.LogInfo("ProofAcidFire loaded");
             harmony.PatchAll();
@@ -16,38 +19,6 @@ namespace ProofAcidFire
             Logger.LogInfo("ProofAcidFire ready");
         }
     }
-
-
-    /* 目标代码
-     public class Card : BaseCard, IReservable, ICardParent, IRenderSource, IGlobalValue, IInspect
-    {
-        public bool isAcidproof
-        {
-            get
-            {
-                return this._bits1[22];
-            }
-            set
-            {
-                this._bits1[22] = value;
-            }
-        }
-
-        public bool isFireproof
-        {
-            get
-            {
-                return this._bits1[21];
-            }
-            set
-            {
-                this._bits1[21] = value;
-            }
-        }
-
-    }
-     */
-
 
     [HarmonyPatch(typeof(Card), "isAcidproof", MethodType.Getter)]
     public static class ProofAcidPatch
@@ -64,6 +35,25 @@ namespace ProofAcidFire
         private static void Postfix(ref bool __result)
         {
             __result = true;
+        }
+    }
+
+    [HarmonyPatch(typeof(Map), "TryShatter")]
+    public static class ProofAcidFirePatch
+    {
+        private static bool Prefix(Point pos, int ele, int power)
+        {
+            Element element = Element.Create(ele, 0);
+            if (ele == 911)
+            {
+                if (pos.IsSync)
+                {
+                    Msg.Say((pos.HasChara ? "blanketInv_" : "blanketGround_") + element.source.alias, "Mod", pos.FirstChara?.ToString(), null, null);
+                    ProofAcidFire.Logger.LogInfo((pos.HasChara ? "blanketInv_" : "blanketGround_") + element.source.alias);
+                }
+                return false;
+            }
+            return true;
         }
     }
 }
