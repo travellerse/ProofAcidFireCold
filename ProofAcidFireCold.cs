@@ -4,7 +4,7 @@ using HarmonyLib;
 
 namespace ProofAcidFireCold
 {
-    [BepInPlugin("com.travellerse.plugins.ProofAcidFireCold", "Proof Acid Fire Cold", "0.1.0.0")]
+    [BepInPlugin("com.travellerse.plugins.ProofAcidFireCold", "Proof Acid Fire Cold", "0.1.1.0")]
     [BepInProcess("Elin.exe")]
     public class ProofAcidFireCold : BaseUnityPlugin
     {
@@ -48,7 +48,7 @@ namespace ProofAcidFireCold
             {
                 if (pos.IsSync)
                 {
-                    Msg.Say((pos.HasChara ? "blanketInv_" : "blanketGround_") + element.source.alias, "Mod", pos.FirstChara?.ToString(), null, null);
+                    Msg.Say((pos.HasChara ? "blanketInv_" : "blanketGround_") + element.source.alias, "Mod", pos.FirstChara.Name, null, null);
                     ProofAcidFireCold.Logger.LogInfo((pos.HasChara ? "blanketInv_" : "blanketGround_") + element.source.alias);
                 }
                 return false;
