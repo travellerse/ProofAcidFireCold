@@ -48,7 +48,7 @@ namespace ProofAcidFireCold
             {
                 if (pos.IsSync)
                 {
-                    Msg.Say((pos.HasChara ? "blanketInv_" : "blanketGround_") + element.source.alias, "Mod", pos.FirstChara.Name, null, null);
+                    Msg.Say((pos.HasChara ? "blanketInv_" : "blanketGround_") + element.source.alias, "ProofAcidFireCold Mod", pos.FirstChara.Name, null, null);
                     ProofAcidFireCold.Logger.LogInfo((pos.HasChara ? "blanketInv_" : "blanketGround_") + element.source.alias);
                 }
                 return false;
