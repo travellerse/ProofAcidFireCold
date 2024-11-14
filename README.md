@@ -28,3 +28,6 @@ ProofSteal = true
 This mod does not make any changes to the game save, only intercepts and adds acid and fire resistance when reading item characteristics, and prevents freezing damage. This means that any changes to this mod are not retained.
 
 このmodはゲームのアーカイブには何の修正も行われていません。ただオブジェクトの特性を読み取る時に遮断し、耐酸性、耐火性を追加し、同時に冷凍破壊を阻止します。これはmodの変更は保留されません
+
+## Source
+[[GitHub] https://github.com/travellerse/ProofAcidFireCold](https://github.com/travellerse/ProofAcidFireCold)
