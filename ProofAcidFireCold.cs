@@ -2,10 +2,11 @@
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
+using System.Collections.Generic;
 
 namespace ProofAcidFireCold
 {
-    [BepInPlugin("com.travellerse.plugins.ProofAcidFireCold", "Proof Acid Fire Cold", "0.2.0.0")]
+    [BepInPlugin("com.travellerse.plugins.ProofAcidFireCold", "Proof Acid Fire Cold", "0.2.1.0")]
     [BepInProcess("Elin.exe")]
     public class ProofAcidFireCold : BaseUnityPlugin
     {
@@ -72,12 +73,16 @@ namespace ProofAcidFireCold
         private static bool Prefix(Point pos, int ele, int power)
         {
             Element element = Element.Create(ele, 0);
+            List<Card> cards = pos.ListCards(false);
             if (ele == 911)
             {
-                if (pos.IsSync)
+                foreach (Card card in cards)
                 {
-                    Msg.Say((pos.HasChara ? "blanketInv_" : "blanketGround_") + element.source.alias, "ProofAcidFireCold Mod", pos.FirstChara.Name, null, null);
-                    ProofAcidFireCold.Logger.LogInfo((pos.HasChara ? "blanketInv_" : "blanketGround_") + element.source.alias);
+                    if (pos.IsSync)
+                    {
+                        Msg.Say((card.isChara ? "blanketInv_" : "blanketGround_") + element.source.alias, "ProofAcidFireCold Mod", pos.FirstChara.Name, null, null);
+                        ProofAcidFireCold.Logger.LogInfo((card.isChara ? "blanketInv_" : "blanketGround_") + element.source.alias);
+                    }
                 }
                 return false;
             }
