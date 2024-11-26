@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace ProofAcidFireCold
 {
-    [BepInPlugin("com.travellerse.plugins.ProofAcidFireCold", "Proof Acid Fire Cold", "0.2.2.0")]
+    [BepInPlugin("com.travellerse.plugins.ProofAcidFireCold", "Proof Acid Fire Cold", "0.3.0.0")]
     [BepInProcess("Elin.exe")]
     public class ProofAcidFireCold : BaseUnityPlugin
     {
