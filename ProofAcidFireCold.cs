@@ -12,6 +12,7 @@ namespace ProofAcidFireCold
     {
         private ConfigEntry<bool> configProofAcid;
         private ConfigEntry<bool> configProofFire;
+        private ConfigEntry<bool> configMeatOnMapProofFire;
         private ConfigEntry<bool> configProofCold;
         private ConfigEntry<bool> configProofSteal;
 
@@ -23,8 +24,10 @@ namespace ProofAcidFireCold
             Harmony harmony = new Harmony("com.travellerse.plugins.ProofAcidFireCold");
             configProofAcid = Config.Bind("ProofAcidFireCold", "ProofAcid", true, "Proof against acid damage");
             configProofFire = Config.Bind("ProofAcidFireCold", "ProofFire", true, "Proof against fire damage");
+            configMeatOnMapProofFire = Config.Bind("ProofAcidFireCold", "MeatOnMapProofFire", false, "A true value means that you cannot roast meat with fire elements on the map");
             configProofCold = Config.Bind("ProofAcidFireCold", "ProofCold", true, "Proof against cold damage");
             configProofSteal = Config.Bind("ProofAcidFireCold", "ProofSteal", true, "Proof against steal effect");
+
             if (configProofAcid.Value)
             {
                 harmony.PatchAll(typeof(ProofAcidPatch));
@@ -32,7 +35,9 @@ namespace ProofAcidFireCold
             }
             if (configProofFire.Value)
             {
-                harmony.PatchAll(typeof(ProofFirePatch));
+                if (configMeatOnMapProofFire.Value)
+                    harmony.PatchAll(typeof(ProofFirePatch));
+                else harmony.PatchAll(typeof(ProofFireAndMeatPatch));
                 Logger.LogInfo("ProofFire enabled");
             }
             if (configProofCold.Value)
@@ -59,9 +64,19 @@ namespace ProofAcidFireCold
     }
 
     [HarmonyPatch(typeof(Card), "isFireproof", MethodType.Getter)]
+    public static class ProofFireAndMeatPatch
+    {
+        private static void Postfix(Card __instance, ref bool __result)
+        {
+            if (__instance.category.name == "Meat" && __instance.ExistsOnMap) return;
+            __result = true;
+        }
+    }
+
+    [HarmonyPatch(typeof(Card), "isFireproof", MethodType.Getter)]
     public static class ProofFirePatch
     {
-        private static void Postfix(ref bool __result)
+        private static void Postfix(Card __instance, ref bool __result)
         {
             __result = true;
         }

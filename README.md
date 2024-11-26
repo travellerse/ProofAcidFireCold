@@ -1,11 +1,11 @@
 # ProofAcidFireCold
 
 ## Description
-这个mod为物品添加了耐酸、耐火的特性，同时阻止了物品被冷冻破坏。
+这个mod为物品添加了耐酸、耐火的特性，同时阻止了物品被冷冻破坏。同时添加了一个值configMeatOnMapProofFire，值为true表示不能在地图上用火元素烤肉，默认为false。
 
-This mod adds acid and fire resistance to items while preventing them from being damaged by freezing.
+This mod adds acid and fire resistance to items while preventing them from being damaged by freezing.A value configMeatOnMapProofFire is also added, with a value of true indicating that fire elements cannot be used to roast meat on the map. The default value is false.
 
-このmodは物品に耐酸性、耐火性の特性を加えて、同時に物品が冷凍破壊されることを阻止します。
+このmodは物品に耐酸性、耐火性の特性を加えて、同時に物品が冷凍破壊されることを阻止します。また、「configMeatOnMapProofFire」という値も追加されました。「true」はマップ上で火の要素でバーベキューができないことを示し、デフォルトは「false」です。
 
 ## Config
 配置文件位于`Elin\BepInEx\config\com.travellerse.plugins.ProofAcidFireCold.cfg`，可以对耐酸、耐火、耐寒、防盗特性单独进行配置。
@@ -18,6 +18,7 @@ Configuration file located in `Elin\BepInEx\config\com.travellerse.plugins.Proof
 # ture/false
 ProofAcid = true
 ProofFire = true
+configMeatOnMapProofFire = false
 ProofCold = true
 ProofSteal = true
 ```

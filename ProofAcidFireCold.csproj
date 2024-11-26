@@ -47,6 +47,10 @@
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\Elin_Data\Managed\Elin.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Plugins.BaseCore">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\Elin_Data\Managed\Plugins.BaseCore.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
