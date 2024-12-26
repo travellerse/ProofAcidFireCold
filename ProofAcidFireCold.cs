@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace ProofAcidFireCold
 {
-    [BepInPlugin("com.travellerse.plugins.ProofAcidFireCold", "Proof Acid Fire Cold", "0.3.1.0")]
+    [BepInPlugin("com.travellerse.plugins.ProofAcidFireCold", "Proof Acid Fire Cold", "0.3.2.0")]
     [BepInProcess("Elin.exe")]
     public class ProofAcidFireCold : BaseUnityPlugin
     {
@@ -68,7 +68,7 @@ namespace ProofAcidFireCold
     {
         private static void Postfix(Card __instance, ref bool __result)
         {
-            if (__instance.category.IsChildOf("meat") && __instance.ExistsOnMap) return;
+            if (__instance.IsFood && __instance.category.IsChildOf("foodstuff") && __instance.ExistsOnMap) return;
             __result = true;
         }
     }
@@ -95,7 +95,7 @@ namespace ProofAcidFireCold
                 {
                     if (pos.IsSync)
                     {
-                        Msg.Say((card.isChara ? "blanketInv_" : "blanketGround_") + element.source.alias, "ProofAcidFireCold Mod", pos.FirstChara.Name, null, null);
+                        Msg.Say((card.isChara ? "blanketInv_" : "blanketGround_") + element.source.alias, "ProofAcidFireCold Mod", Msg.GetName(card), null, null);
                         ProofAcidFireCold.Logger.LogInfo((card.isChara ? "blanketInv_" : "blanketGround_") + element.source.alias);
                     }
                 }
