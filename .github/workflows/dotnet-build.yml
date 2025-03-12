@@ -24,6 +24,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Get version from package.xml
+      id: version
+      run: echo "::set-output name=version::$(cat package.xml | grep -oP '(?<=<version>)[^<]+')"
+
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
@@ -34,5 +38,33 @@ jobs:
     - name: Publish Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ProofAcidFireCold
+        name: ProofAcidFireCold-${{ steps.version.outputs.version }}
         path: bin/${{ env.BUILD_CONFIGURATION }}/
+
+  release:
+    needs: build-and-pack
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download Artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: ProofAcidFireCold-${{ needs.version.outputs.version }}
+
+    - name: Unzip Artifact
+      run: |
+        mkdir -p bin/${{ env.BUILD_CONFIGURATION }}
+        unzip -qq ${{ github.workspace }}/ProofAcidFireCold-${{ needs.version.outputs.version }}.zip -d bin/${{ env.BUILD_CONFIGURATION }}
+
+    - name: Upload release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: bin/${{ env.BUILD_CONFIGURATION }}/*
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag_name: ${{ needs.version.outputs.version }}
+        release_name: ${{ needs.version.outputs.version }}
+        body: ${{ needs.version.outputs.version }}
+        draft: true
