@@ -62,7 +62,7 @@ jobs:
     - name: Unzip Artifact
       run: |
         mkdir -p bin/${{ env.BUILD_CONFIGURATION }}
-        unzip -qq ${{ github.workspace }}/${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip -d bin/${{ env.BUILD_CONFIGURATION }}
+        unzip -qq "${{ github.workspace }}/${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip" -d bin/${{ env.BUILD_CONFIGURATION }}
 
     - name: Upload release
       uses: softprops/action-gh-release@v2
