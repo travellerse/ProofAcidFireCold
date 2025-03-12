@@ -66,7 +66,9 @@ namespace ProofAcidFireCold
             if (configProofFire.Value)
             {
                 harmony.PatchAll(typeof(FireProofPatch));
-                Logger.LogInfo("Fire proof enabled (Meat protection: " + IsMeatFireproofEnabled + ")");
+                Logger.LogInfo("Fire proof enabled");
+                Logger.LogInfo("MeatOnMapProofFire " + (IsMeatFireproofEnabled ? "enabled" : "disabled"));
+                Logger.LogInfo("GarbageProofFire " + (IsGarbageFireproofEnabled ? "enabled" : "disabled"));
             }
 
             if (configProofCold.Value)
