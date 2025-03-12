@@ -8,8 +8,8 @@ on:
 
 env:
   PROJECT_NAME: ProofAcidFireCold
-  SOLUTION_FILE: ${{ env.PROJECT_NAME }}.sln
-  PROJECT_PATH: ${{ env.PROJECT_NAME }}.csproj
+  SOLUTION_FILE: ProofAcidFireCold.sln
+  PROJECT_PATH: ProofAcidFireCold.csproj
   DOTNET_VERSION: '4.6.2'
   BUILD_CONFIGURATION: Release
 
