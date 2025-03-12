@@ -7,8 +7,9 @@ on:
     branches: [ "feat/workflows_build"]
 
 env:
-  SOLUTION_FILE: ProofAcidFireCold.sln
-  PROJECT_PATH: ProofAcidFireCold.csproj
+  PROJECT_NAME: ProofAcidFireCold
+  SOLUTION_FILE: ${{ env.PROJECT_NAME }}.sln
+  PROJECT_PATH: ${{ env.PROJECT_NAME }}.csproj
   DOTNET_VERSION: '4.6.2'
   BUILD_CONFIGURATION: Release
 
@@ -38,7 +39,7 @@ jobs:
     - name: Publish Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ProofAcidFireCold-${{ steps.version.outputs.version }}
+        name: ${{ env.PROJECT_NAME }}-${{ steps.version.outputs.version }}
         path: bin/${{ env.BUILD_CONFIGURATION }}/
 
   release:
@@ -52,12 +53,12 @@ jobs:
     - name: Download Artifact
       uses: actions/download-artifact@v2
       with:
-        name: ProofAcidFireCold-${{ needs.version.outputs.version }}
+        name: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version }}
 
     - name: Unzip Artifact
       run: |
         mkdir -p bin/${{ env.BUILD_CONFIGURATION }}
-        unzip -qq ${{ github.workspace }}/ProofAcidFireCold-${{ needs.version.outputs.version }}.zip -d bin/${{ env.BUILD_CONFIGURATION }}
+        unzip -qq ${{ github.workspace }}/${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version }}.zip -d bin/${{ env.BUILD_CONFIGURATION }}
 
     - name: Upload release
       uses: softprops/action-gh-release@v2
