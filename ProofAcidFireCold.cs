@@ -2,126 +2,152 @@
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
-using System.Collections.Generic;
 
 namespace ProofAcidFireCold
 {
-    [BepInPlugin("com.travellerse.plugins.ProofAcidFireCold", "Proof Acid Fire Cold", "0.3.2.0")]
+    [BepInPlugin("com.travellerse.plugins.ProofAcidFireCold", "Proof Acid Fire Cold", "0.4.0.0")]
     [BepInProcess("Elin.exe")]
     public class ProofAcidFireCold : BaseUnityPlugin
     {
-        private ConfigEntry<bool> configProofAcid;
-        private ConfigEntry<bool> configProofFire;
-        private ConfigEntry<bool> configMeatOnMapProofFire;
-        private ConfigEntry<bool> configProofCold;
-        private ConfigEntry<bool> configProofSteal;
+        // Configuration entries
+        private ConfigEntry<bool> configProofAcid = null!;
+        private ConfigEntry<bool> configProofFire = null!;
+        private ConfigEntry<bool> configMeatOnMapProofFire = null!;
+        private ConfigEntry<bool> configProofCold = null!;
+        private ConfigEntry<bool> configProofSteal = null!;
 
-        public static new ManualLogSource Logger;
+        // Static configuration accessors
+        public static bool IsMeatFireproofEnabled { get; private set; }
+        public static new ManualLogSource Logger { get; private set; } = null!;
+
+        // Element constants
+        public const int FIRE_ELEMENT_ID = 910;
+        public const int COLD_ELEMENT_ID = 911;
+        public const int ACID_ELEMENT_ID = 923;
+
         void Awake()
         {
             Logger = base.Logger;
-            Logger.LogInfo("ProofAcidFireCold loaded");
-            Harmony harmony = new Harmony("com.travellerse.plugins.ProofAcidFireCold");
-            configProofAcid = Config.Bind("ProofAcidFireCold", "ProofAcid", true, "Proof against acid damage");
-            configProofFire = Config.Bind("ProofAcidFireCold", "ProofFire", true, "Proof against fire damage");
-            configMeatOnMapProofFire = Config.Bind("ProofAcidFireCold", "MeatOnMapProofFire", false, "A true value means that you cannot roast meat with fire elements on the map");
-            configProofCold = Config.Bind("ProofAcidFireCold", "ProofCold", true, "Proof against cold damage");
-            configProofSteal = Config.Bind("ProofAcidFireCold", "ProofSteal", true, "Proof against steal effect");
+            Logger.LogInfo("Initializing ProofAcidFireCold...");
 
+            // Initialize configuration
+            configProofAcid = Config.Bind("ProofAcidFireCold", "ProofAcid", true, "Immunity to acid damage");
+            configProofFire = Config.Bind("ProofAcidFireCold", "ProofFire", true, "Immunity to fire damage");
+            configMeatOnMapProofFire = Config.Bind("ProofAcidFireCold", "MeatOnMapProofFire", false,
+                "Prevent meat from being cooked by map fire elements when enabled");
+            configProofCold = Config.Bind("ProofAcidFireCold", "ProofCold", true, "Immunity to cold damage");
+            configProofSteal = Config.Bind("ProofAcidFireCold", "ProofSteal", true, "Immunity to steal effects");
+
+            // Store meat proof configuration statically
+            IsMeatFireproofEnabled = configMeatOnMapProofFire.Value;
+
+            var harmony = new Harmony("com.travellerse.plugins.ProofAcidFireCold");
+
+            // Apply patches based on configuration
+            ApplyPatches(harmony);
+
+            Logger.LogInfo("ProofAcidFireCold initialization complete");
+        }
+
+        private void ApplyPatches(Harmony harmony)
+        {
             if (configProofAcid.Value)
             {
-                harmony.PatchAll(typeof(ProofAcidPatch));
-                Logger.LogInfo("ProofAcid enabled");
+                harmony.PatchAll(typeof(AcidProofPatch));
+                Logger.LogInfo("Acid proof enabled");
             }
+
             if (configProofFire.Value)
             {
-                if (configMeatOnMapProofFire.Value)
-                    harmony.PatchAll(typeof(ProofFirePatch));
-                else harmony.PatchAll(typeof(ProofFireAndMeatPatch));
-                Logger.LogInfo("ProofFire enabled");
+                harmony.PatchAll(typeof(FireProofPatch));
+                Logger.LogInfo("Fire proof enabled (Meat protection: " + IsMeatFireproofEnabled + ")");
             }
+
             if (configProofCold.Value)
             {
-                harmony.PatchAll(typeof(ProofColdPatch));
-                Logger.LogInfo("ProofCold enabled");
+                harmony.PatchAll(typeof(ColdProofPatch));
+                Logger.LogInfo("Cold proof enabled");
             }
+
             if (configProofSteal.Value)
             {
-                harmony.PatchAll(typeof(ProofStealPatch));
-                Logger.LogInfo("ProofSteal enabled");
+                harmony.PatchAll(typeof(StealProofPatch));
+                Logger.LogInfo("Steal proof enabled");
             }
-            Logger.LogInfo("ProofAcidFireCold finished");
         }
     }
 
     [HarmonyPatch(typeof(Card), "isAcidproof", MethodType.Getter)]
-    public static class ProofAcidPatch
+    public static class AcidProofPatch
     {
-        private static void Postfix(ref bool __result)
-        {
-            __result = true;
-        }
+        [HarmonyPostfix]
+        public static void MakeAcidproof(ref bool __result) => __result = true;
     }
 
     [HarmonyPatch(typeof(Card), "isFireproof", MethodType.Getter)]
-    public static class ProofFireAndMeatPatch
+    public static class FireProofPatch
     {
-        private static void Postfix(Card __instance, ref bool __result)
+        [HarmonyPostfix]
+        public static void MakeFireproof(Card __instance, ref bool __result)
         {
-            if (__instance.IsFood && __instance.category.IsChildOf("foodstuff") && __instance.ExistsOnMap) return;
-            __result = true;
-        }
-    }
+            // Preserve original behavior for meat if configured
+            if (!ProofAcidFireCold.IsMeatFireproofEnabled &&
+                __instance.IsFood &&
+                __instance.category.IsChildOf("foodstuff") &&
+                __instance.ExistsOnMap) return;
 
-    [HarmonyPatch(typeof(Card), "isFireproof", MethodType.Getter)]
-    public static class ProofFirePatch
-    {
-        private static void Postfix(Card __instance, ref bool __result)
-        {
             __result = true;
         }
     }
 
     [HarmonyPatch(typeof(Map), "TryShatter")]
-    public static class ProofColdPatch
+    public static class ColdProofPatch
     {
-        private static bool Prefix(Point pos, int ele, int power)
+        [HarmonyPrefix]
+        public static bool BlockColdDamage(Point pos, int ele)
         {
-            Element element = Element.Create(ele, 0);
-            List<Card> cards = pos.ListCards(false);
-            if (ele == 911)
+            if (ele != ProofAcidFireCold.COLD_ELEMENT_ID) return true;
+
+            foreach (var card in pos.ListCards(false))
             {
-                foreach (Card card in cards)
-                {
-                    if (pos.IsSync)
-                    {
-                        Msg.Say((card.isChara ? "blanketInv_" : "blanketGround_") + element.source.alias, "ProofAcidFireCold Mod", Msg.GetName(card), null, null);
-                        ProofAcidFireCold.Logger.LogInfo((card.isChara ? "blanketInv_" : "blanketGround_") + element.source.alias);
-                    }
-                }
-                return false;
+                if (!pos.IsSync) continue;
+
+                var messageKey = card.isChara ? "blanketInv_" : "blanketGround_";
+                Msg.Say($"{messageKey}{Element.Create(ele, 0).source.alias}",
+                    "ProofAcidFireCold Mod",
+                    Msg.GetName(card));
             }
-            return true;
+            return false;
         }
     }
 
-    //System.Void ActEffect::Proc(EffectId,System.Int32,BlessedState,Card,Card,ActRef)
-    [HarmonyPatch(typeof(ActEffect), "Proc", new System.Type[] { typeof(EffectId), typeof(int), typeof(BlessedState), typeof(Card), typeof(Card), typeof(ActRef) })]
-    public static class ProofStealPatch
+    [HarmonyPatch(typeof(ActEffect), "Proc")]
+    public static class StealProofPatch
     {
-        private static bool Prefix(EffectId id, int power, BlessedState state, Card cc, Card tc = null, ActRef actRef = default(ActRef))
+        private static readonly System.Type[] ParameterTypes = new System.Type[] {
+            typeof(EffectId), typeof(int), typeof(BlessedState),
+            typeof(Card), typeof(Card), typeof(ActRef)
+        };
+
+        [HarmonyPrefix]
+        [HarmonyArgument(0, "id")]
+        [HarmonyArgument(3, "tc")]
+        [HarmonyArgument(5, "actRef")]
+        public static bool BlockStealEffect(EffectId id, Card tc, ActRef actRef)
         {
-            if (id == EffectId.Steal)
+            if (id != EffectId.Steal) return true;
+
+            if (tc.Chara != null)
             {
-                if (tc.Chara != null)
-                {
-                    tc.Chara.Say((actRef.n1 == "money") ? "abStealNegateMoney" : "abStealNegate", tc.Chara, null, null);
-                    ProofAcidFireCold.Logger.LogInfo((actRef.n1 == "money") ? "abStealNegateMoney" : "abStealNegate");
-                    return false;
-                }
-                ProofAcidFireCold.Logger.LogInfo("Proof steal effect failed");
+                var messageKey = actRef.n1 == "money" ? "abStealNegateMoney" : "abStealNegate";
+                tc.Chara.Say(messageKey, tc.Chara);
+                ProofAcidFireCold.Logger.LogInfo("Blocked steal attempt: " + messageKey);
             }
-            return true;
+            else
+            {
+                ProofAcidFireCold.Logger.LogInfo("Steal proof failed - no valid target");
+            }
+            return false;
         }
     }
 }
