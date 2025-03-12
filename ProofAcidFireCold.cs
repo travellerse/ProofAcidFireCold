@@ -5,7 +5,7 @@ using HarmonyLib;
 
 namespace ProofAcidFireCold
 {
-    [BepInPlugin("com.travellerse.plugins.ProofAcidFireCold", "Proof Acid Fire Cold", "0.4.0.0")]
+    [BepInPlugin("com.travellerse.plugins.ProofAcidFireCold", "Proof Acid Fire Cold", "0.4.1.0")]
     [BepInProcess("Elin.exe")]
     public class ProofAcidFireCold : BaseUnityPlugin
     {
@@ -13,11 +13,13 @@ namespace ProofAcidFireCold
         private ConfigEntry<bool> configProofAcid = null!;
         private ConfigEntry<bool> configProofFire = null!;
         private ConfigEntry<bool> configMeatOnMapProofFire = null!;
+        private ConfigEntry<bool> configGarbageProofFire = null!;
         private ConfigEntry<bool> configProofCold = null!;
         private ConfigEntry<bool> configProofSteal = null!;
 
         // Static configuration accessors
         public static bool IsMeatFireproofEnabled { get; private set; }
+        public static bool IsGarbageFireproofEnabled { get; private set; }
         public static new ManualLogSource Logger { get; private set; } = null!;
 
         // Element constants
@@ -33,13 +35,17 @@ namespace ProofAcidFireCold
             // Initialize configuration
             configProofAcid = Config.Bind("ProofAcidFireCold", "ProofAcid", true, "Immunity to acid damage");
             configProofFire = Config.Bind("ProofAcidFireCold", "ProofFire", true, "Immunity to fire damage");
-            configMeatOnMapProofFire = Config.Bind("ProofAcidFireCold", "MeatOnMapProofFire", false,
-                "Prevent meat from being cooked by map fire elements when enabled");
             configProofCold = Config.Bind("ProofAcidFireCold", "ProofCold", true, "Immunity to cold damage");
             configProofSteal = Config.Bind("ProofAcidFireCold", "ProofSteal", true, "Immunity to steal effects");
 
+            configMeatOnMapProofFire = Config.Bind("ProofAcidFireCold", "MeatOnMapProofFire", false,
+                "Prevent meat from being cooked by map fire elements when enabled");
+            configGarbageProofFire = Config.Bind("ProofAcidFireCold", "GarbageProofFire", false,
+                "Prevent garbage from being destroyed by map fire elements when enabled");
+
             // Store meat proof configuration statically
             IsMeatFireproofEnabled = configMeatOnMapProofFire.Value;
+            IsGarbageFireproofEnabled = configGarbageProofFire.Value;
 
             var harmony = new Harmony("com.travellerse.plugins.ProofAcidFireCold");
 
@@ -60,7 +66,9 @@ namespace ProofAcidFireCold
             if (configProofFire.Value)
             {
                 harmony.PatchAll(typeof(FireProofPatch));
-                Logger.LogInfo("Fire proof enabled (Meat protection: " + IsMeatFireproofEnabled + ")");
+                Logger.LogInfo("Fire proof enabled");
+                Logger.LogInfo("MeatOnMapProofFire " + (IsMeatFireproofEnabled ? "enabled" : "disabled"));
+                Logger.LogInfo("GarbageProofFire " + (IsGarbageFireproofEnabled ? "enabled" : "disabled"));
             }
 
             if (configProofCold.Value)
@@ -94,6 +102,10 @@ namespace ProofAcidFireCold
                 __instance.IsFood &&
                 __instance.category.IsChildOf("foodstuff") &&
                 __instance.ExistsOnMap) return;
+
+            // System.Boolean FactionBranch::TryTrash(Thing)
+            if (!ProofAcidFireCold.IsGarbageFireproofEnabled &&
+                (__instance.category.id == "garbage" || __instance.category.id == "junk")) return;
 
             __result = true;
         }
