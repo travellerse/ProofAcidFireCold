@@ -90,7 +90,6 @@ namespace ProofAcidFireCold
         [HarmonyPostfix]
         public static void MakeFireproof(Card __instance, ref bool __result)
         {
-            // Preserve original behavior for meat if configured
             if (!ProofAcidFireCold.IsMeatFireproofEnabled &&
                 __instance.IsFood &&
                 __instance.category.IsChildOf("foodstuff") &&
