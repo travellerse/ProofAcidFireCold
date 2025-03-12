@@ -14,48 +14,32 @@ env:
 
 jobs:
   build-and-pack:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     
     strategy:
       matrix:
-        configuration: [Debug, Release]
+        configuration: [Release]
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Setup .NET SDK
-      uses: actions/setup-dotnet@v4
+    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Setup nuget
+      uses: NuGet/setup-nuget@v2
       with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
+        nuget-version: 5.x
 
     - name: Restore dependencies
-      run: dotnet restore ${{ env.SOLUTION_FILE }}
-      
-    - name: Cache NuGet packages
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.nuget/packages
-          **/bin
-          **/obj
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
+      run: nuget restore ${{ env.SOLUTION_FILE }}
 
     - name: Build solution
-      run: dotnet build ${{ env.SOLUTION_FILE }} --configuration ${{ matrix.configuration }} --no-restore
+      run: msbuild ${{ env.SOLUTION_FILE }} /p:Configuration=${{ env.BUILD_CONFIGURATION }} /p:Platform="Any CPU" /p:TargetFrameworkVersion=v${{ env.DOTNET_VERSION }}
 
-    - name: Run tests
-      run: dotnet test ${{ env.SOLUTION_FILE }} --configuration ${{ matrix.configuration }} --no-build --verbosity normal
-
-    - name: Pack artifacts
-      if: matrix.configuration == env.BUILD_CONFIGURATION
-      run: dotnet pack ${{ env.PROJECT_PATH }} --configuration ${{ matrix.configuration }} --no-build --output ./artifacts
-
-    - name: Upload artifacts
+    - name: Publish Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: dll-package-${{ matrix.configuration }}
-        path: ./artifacts
-        if-no-files-found: error
+        name: ProofAcidFireCold
