@@ -27,7 +27,7 @@ jobs:
 
     - name: Get version from package.xml
       id: version
-      run: echo "::set-output name=version::$(cat package.xml | grep -oP '(?<=<version>)[^<]+')"
+      run: echo "::set-output name=version::$(grep -o '<version>[^<]*' package.xml | sed 's/<version>//')"
 
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
