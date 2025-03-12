@@ -120,18 +120,10 @@ namespace ProofAcidFireCold
         }
     }
 
-    [HarmonyPatch(typeof(ActEffect), "Proc")]
+    [HarmonyPatch(typeof(ActEffect), "Proc", new System.Type[] { typeof(EffectId), typeof(int), typeof(BlessedState), typeof(Card), typeof(Card), typeof(ActRef) })]
     public static class StealProofPatch
     {
-        private static readonly System.Type[] ParameterTypes = new System.Type[] {
-            typeof(EffectId), typeof(int), typeof(BlessedState),
-            typeof(Card), typeof(Card), typeof(ActRef)
-        };
-
         [HarmonyPrefix]
-        [HarmonyArgument(0, "id")]
-        [HarmonyArgument(3, "tc")]
-        [HarmonyArgument(5, "actRef")]
         public static bool BlockStealEffect(EffectId id, Card tc, ActRef actRef)
         {
             if (id != EffectId.Steal) return true;
