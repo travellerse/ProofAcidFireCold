@@ -54,19 +54,19 @@ jobs:
     - name: Download Artifact
       uses: actions/download-artifact@v4
       with:
-        name: ${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.version.outputs.version }}
+        name: ${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}
 
     - name: Unzip Artifact
       run: |
         mkdir -p bin/${{ env.BUILD_CONFIGURATION }}
-        unzip -qq ${{ github.workspace }}/${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.version.outputs.version }}.zip -d bin/${{ env.BUILD_CONFIGURATION }}
+        unzip -qq ${{ github.workspace }}/${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip -d bin/${{ env.BUILD_CONFIGURATION }}
 
     - name: Upload release
       uses: softprops/action-gh-release@v2
       with:
         files: bin/${{ env.BUILD_CONFIGURATION }}/*
         token: ${{ secrets.GITHUB_TOKEN }}
-        tag_name: ${{ needs.build-and-pack.version.outputs.version }}
-        release_name: ${{ needs.build-and-pack.version.outputs.version }}
-        body: ${{ needs.build-and-pack.version.outputs.version }}
+        tag_name: ${{ needs.build-and-pack.outputs.version }}
+        release_name: ${{ needs.build-and-pack.outputs.version }}
+        body: ${{ needs.build-and-pack.outputs.version }}
         draft: true
