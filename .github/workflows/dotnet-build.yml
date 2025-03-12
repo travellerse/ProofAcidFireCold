@@ -28,8 +28,7 @@ jobs:
     - name: Get version from package.xml
       id: version
       run: |
-        version=$(grep -o '<version>[^<]*' package.xml | sed 's/<version>//')
-        echo "version=$version" >> $GITHUB_ENV
+        echo "::set-output name=version::$(grep -o '<version>[^<]*' package.xml | sed 's/<version>//')"
 
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
