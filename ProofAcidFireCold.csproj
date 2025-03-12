@@ -45,11 +45,11 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="Elin">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\Elin_Data\Managed\Elin.dll</HintPath>
+      <HintPath>ref\Elin.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Plugins.BaseCore">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\Elin_Data\Managed\Plugins.BaseCore.dll</HintPath>
+      <HintPath>ref\Plugins.BaseCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
