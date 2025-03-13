@@ -2,9 +2,9 @@ name: .NET DLL Build & Release
 
 on:
   push:
-    branches: [ "feat/workflows_build"]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "feat/workflows_build"]
+    branches: [ "master" ]
 
 env:
   PROJECT_NAME: ProofAcidFireCold
