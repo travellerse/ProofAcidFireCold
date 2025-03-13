@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Reflection.Emit;
-using BepInEx;
+﻿using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
+using System.Collections.Generic;
 
 namespace ProofAcidFireCold
 {
@@ -46,7 +45,7 @@ namespace ProofAcidFireCold
                 "Prevent meat from being cooked by map fire elements when enabled");
             configGarbageProofFire = Config.Bind("ProofAcidFireCold", "GarbageProofFire", false,
                 "Prevent garbage from being destroyed by map fire elements when enabled");
-            configDisableBlanketsCost = Config.Bind("ProofAcidFireCold", "DisableBlanketsCost", false,
+            configDisableBlanketsCost = Config.Bind("ProofAcidFireCold", "DisableBlanketsCost", true,
                 "Disable the cost of blankets");
 
             // Store meat proof configuration statically
