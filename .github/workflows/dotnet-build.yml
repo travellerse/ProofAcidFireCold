@@ -68,7 +68,7 @@ jobs:
       id: ziphash
       run: |
         zip -r "${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip" "${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}"
-        echo "::set-output name=sha256::$(sha256sum ${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip)"
+        echo "::set-output name=sha256::$(sha256sum ${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip | awk '{ print $1 }')"
 
     - name: Upload release
       uses: softprops/action-gh-release@v2
