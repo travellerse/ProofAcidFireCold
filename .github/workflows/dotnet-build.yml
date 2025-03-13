@@ -62,8 +62,7 @@ jobs:
 
     - name: Unzip Artifact
       run: |
-        echo ${{ steps.download.outputs.download-path }}
-        unzip ${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip
+        unzip "${{ steps.download.outputs.download-path }}/${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip"
 
     - name: Upload release
       uses: softprops/action-gh-release@v2
