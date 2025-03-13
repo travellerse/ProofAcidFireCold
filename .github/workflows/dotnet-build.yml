@@ -78,7 +78,7 @@ jobs:
         tag_name: ${{ needs.build-and-pack.outputs.version }}
         name: ${{ needs.build-and-pack.outputs.version }}
         body: |
-          ## hash256
+          ## sha256
           - ${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip: ${{ steps.ziphash.outputs.sha256 }}
         draft: true
         prerelease: true
