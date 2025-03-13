@@ -40,6 +40,7 @@ ProofSteal = true   # 防盗特性
 ## 特殊规则
 MeatOnMapProofFire = false # 设为true时地图火元素无法烤肉
 GarbageProofFire = false   # 设为true时垃圾无法燃烧
+DisableBlanketsCost = ture # 设为true时毛毯不消耗
 ```
 
 ## 兼容性
@@ -91,6 +92,7 @@ ProofSteal = true   # Steal prevention
 ## Special Rules
 MeatOnMapProofFire = false # When true, disable meat roasting by map fire
 GarbageProofFire = false   # When true, disable garbage burning
+DisableBlanketsCost = ture # When true, blankets do not consume
 ```
 
 ## Compatibility
@@ -142,6 +144,7 @@ ProofSteal = true   # 盗難防止
 ## 特殊規則
 MeatOnMapProofFire = false # true時マップ火元素で肉焼不可
 GarbageProofFire = false   # true時ゴミ燃焼不可
+DisableBlanketsCost = ture # true時毛布消費無効
 ```
 
 ## 互換性
