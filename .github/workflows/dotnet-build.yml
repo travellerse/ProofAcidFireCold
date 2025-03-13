@@ -62,6 +62,7 @@ jobs:
 
     - name: Unzip Artifact
       run: |
+        ls -R
         unzip "${{ steps.download.outputs.download-path }}/${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip"
 
     - name: Upload release
