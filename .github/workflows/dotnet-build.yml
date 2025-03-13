@@ -13,6 +13,9 @@ env:
   DOTNET_VERSION: '4.6.2'
   BUILD_CONFIGURATION: Release
 
+permissions:
+  contents: write
+
 jobs:
   build-and-pack:
     runs-on: windows-latest
