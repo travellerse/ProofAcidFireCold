@@ -64,10 +64,11 @@ jobs:
         name: ${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}
         path: "${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}"
 
-    - name: zip Artifact
+    - name: zip Artifact and SHA256 hash
+      id: ziphash
       run: |
         zip -r "${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip" "${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}"
-        ls -R
+        echo "::set-output name=sha256::$(sha256sum ${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip)"
 
     - name: Upload release
       uses: softprops/action-gh-release@v2
@@ -78,6 +79,6 @@ jobs:
         name: ${{ needs.build-and-pack.outputs.version }}
         body: |
           ## hash256
-          $(sha256sum ${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip)
+          - ${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip: ${{ steps.ziphash.outputs.sha256 }}
         draft: true
         prerelease: true
