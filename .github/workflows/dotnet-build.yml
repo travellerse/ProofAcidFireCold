@@ -64,6 +64,7 @@ jobs:
     - name: zip Artifact
       run: |
         zip -r "${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip" "${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}"
+        ls -R
 
     - name: Upload release
       uses: softprops/action-gh-release@v2
@@ -72,6 +73,6 @@ jobs:
           "${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
         tag_name: ${{ needs.build-and-pack.outputs.version }}
-        release_name: ${{ needs.build-and-pack.outputs.version }}
+        name: ${{ needs.build-and-pack.outputs.version }}
         body: ${{ needs.build-and-pack.outputs.version }}
         draft: true
