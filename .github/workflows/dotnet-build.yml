@@ -59,17 +59,17 @@ jobs:
       id: download
       with:
         name: ${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}
+        path: "${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}"
 
-    - name: Unzip Artifact
+    - name: zip Artifact
       run: |
-        ls -R
-        unzip "${{ steps.download.outputs.download-path }}/${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip"
+        zip -r "${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}"
 
     - name: Upload release
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          ${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}/*
+          "${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
         tag_name: ${{ needs.build-and-pack.outputs.version }}
         release_name: ${{ needs.build-and-pack.outputs.version }}
