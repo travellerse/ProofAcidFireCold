@@ -7,7 +7,7 @@ using HarmonyLib;
 
 namespace ProofAcidFireCold
 {
-    [BepInPlugin("com.travellerse.plugins.ProofAcidFireCold", "Proof Acid Fire Cold", "0.4.1.0")]
+    [BepInPlugin("com.travellerse.plugins.ProofAcidFireCold", "Proof Acid Fire Cold", "0.4.2.0")]
     [BepInProcess("Elin.exe")]
     public class ProofAcidFireCold : BaseUnityPlugin
     {
