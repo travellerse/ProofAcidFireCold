@@ -2,10 +2,11 @@
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
+using System.Collections.Generic;
 
 namespace ProofAcidFireCold
 {
-    [BepInPlugin("com.travellerse.plugins.ProofAcidFireCold", "Proof Acid Fire Cold", "0.4.1.0")]
+    [BepInPlugin("com.travellerse.plugins.ProofAcidFireCold", "Proof Acid Fire Cold", "0.4.2.0")]
     [BepInProcess("Elin.exe")]
     public class ProofAcidFireCold : BaseUnityPlugin
     {
@@ -14,12 +15,14 @@ namespace ProofAcidFireCold
         private ConfigEntry<bool> configProofFire = null!;
         private ConfigEntry<bool> configMeatOnMapProofFire = null!;
         private ConfigEntry<bool> configGarbageProofFire = null!;
+        private ConfigEntry<bool> configDisableBlanketsCost = null!;
         private ConfigEntry<bool> configProofCold = null!;
         private ConfigEntry<bool> configProofSteal = null!;
 
         // Static configuration accessors
         public static bool IsMeatFireproofEnabled { get; private set; }
         public static bool IsGarbageFireproofEnabled { get; private set; }
+        public static bool IsBlanketCostDisabled { get; private set; }
         public static new ManualLogSource Logger { get; private set; } = null!;
 
         // Element constants
@@ -42,10 +45,13 @@ namespace ProofAcidFireCold
                 "Prevent meat from being cooked by map fire elements when enabled");
             configGarbageProofFire = Config.Bind("ProofAcidFireCold", "GarbageProofFire", false,
                 "Prevent garbage from being destroyed by map fire elements when enabled");
+            configDisableBlanketsCost = Config.Bind("ProofAcidFireCold", "DisableBlanketsCost", true,
+                "Disable the cost of blankets");
 
             // Store meat proof configuration statically
             IsMeatFireproofEnabled = configMeatOnMapProofFire.Value;
             IsGarbageFireproofEnabled = configGarbageProofFire.Value;
+            IsBlanketCostDisabled = configDisableBlanketsCost.Value;
 
             var harmony = new Harmony("com.travellerse.plugins.ProofAcidFireCold");
 
@@ -81,6 +87,12 @@ namespace ProofAcidFireCold
             {
                 harmony.PatchAll(typeof(StealProofPatch));
                 Logger.LogInfo("Steal proof enabled");
+            }
+
+            if (configDisableBlanketsCost.Value)
+            {
+                harmony.PatchAll(typeof(DisableBlanketsCostPatch));
+                Logger.LogInfo("Blanket cost disabled");
             }
         }
     }
@@ -129,6 +141,37 @@ namespace ProofAcidFireCold
                     Msg.GetName(card));
             }
             return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(Map), "TryShatter")]
+    public static class DisableBlanketsCostPatch
+    {
+        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            var codes = new List<CodeInstruction>(instructions);
+            for (int i = 5; i < codes.Count; i++)
+            {
+                if (codes[i].opcode == System.Reflection.Emit.OpCodes.Callvirt && codes[i].operand.ToString().Contains("ModCharge"))
+                {
+                    // 149	01D4	ldloc.s	V_8 (8)
+                    // 150	01D6	brfalse	196 (0260) ldloc.s V_7 (7)
+                    // 151	01DB	ldloc.s	V_8 (8)
+                    // 152	01DD	ldc.i4.m1
+                    // 153	01DE	ldc.i4.0
+                    // 154	01DF	callvirt	instance void Card::ModCharge(int32, bool)
+                    if (codes[i - 5].opcode == System.Reflection.Emit.OpCodes.Ldloc_S &&
+                        codes[i - 4].opcode == System.Reflection.Emit.OpCodes.Brfalse &&
+                        codes[i - 3].opcode == System.Reflection.Emit.OpCodes.Ldloc_S &&
+                        codes[i - 2].opcode == System.Reflection.Emit.OpCodes.Ldc_I4_M1 &&
+                        codes[i - 1].opcode == System.Reflection.Emit.OpCodes.Ldc_I4_0)
+                    {
+                        codes[i - 2].opcode = System.Reflection.Emit.OpCodes.Ldc_I4_0;
+                        break;
+                    }
+                }
+            }
+            return codes;
         }
     }
 
