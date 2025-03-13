@@ -70,7 +70,7 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          "${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip"
+          "${{ steps.download.outputs.download-path }}/${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
         tag_name: ${{ needs.build-and-pack.outputs.version }}
         name: ${{ needs.build-and-pack.outputs.version }}
