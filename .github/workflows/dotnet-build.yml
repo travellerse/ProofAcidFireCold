@@ -70,9 +70,11 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          ${{ steps.download.outputs.download-path }}.zip
-        token: ${{ secrets.GITHUB_TOKEN }}
+          ${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip
         tag_name: ${{ needs.build-and-pack.outputs.version }}
         name: ${{ needs.build-and-pack.outputs.version }}
-        body: ${{ needs.build-and-pack.outputs.version }}
+        body: |
+          ## hash256
+          $(sha256sum ${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip)
         draft: true
+        prerelease: true
