@@ -1,0 +1,84 @@
+name: .NET DLL Build & Release
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  PROJECT_NAME: ProofAcidFireCold
+  SOLUTION_FILE: ProofAcidFireCold.sln
+  PROJECT_PATH: ProofAcidFireCold.csproj
+  DOTNET_VERSION: '4.6.2'
+  BUILD_CONFIGURATION: Release
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-pack:
+    runs-on: windows-latest
+    
+    strategy:
+      matrix:
+        configuration: [Release]
+
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Get version from package.xml
+      id: version
+      run: |
+        echo "::set-output name=version::$(grep -o '<version>[^<]*' package.xml | sed 's/<version>//')"
+
+    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Build solution
+      run: msbuild ${{ env.SOLUTION_FILE }} /p:Configuration=${{ env.BUILD_CONFIGURATION }} /p:Platform="Any CPU" /p:TargetFrameworkVersion=v${{ env.DOTNET_VERSION }}
+
+    - name: Publish Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.PROJECT_NAME }}-${{ steps.version.outputs.version }}
+        path: bin/${{ env.BUILD_CONFIGURATION }}/
+
+  release:
+    needs: build-and-pack
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download Artifact
+      uses: actions/download-artifact@v4
+      id: download
+      with:
+        name: ${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}
+        path: "${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}"
+
+    - name: zip Artifact and SHA256 hash
+      id: ziphash
+      run: |
+        zip -r "${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip" "${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}"
+        echo "::set-output name=sha256::$(sha256sum ${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip | awk '{ print $1 }')"
+
+    - name: Upload release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          ${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip
+        tag_name: ${{ needs.build-and-pack.outputs.version }}
+        name: ${{ needs.build-and-pack.outputs.version }}
+        body: |
+          ## sha256
+          - ${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip: ${{ steps.ziphash.outputs.sha256 }}
+        draft: true
+        prerelease: true
