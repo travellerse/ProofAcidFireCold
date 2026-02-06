@@ -2,15 +2,19 @@ name: .NET DLL Build & Release
 
 on:
   push:
-    branches: ["master"]
+    branches: ["dev", "main"]
   pull_request:
-    branches: ["master"]
+    branches: ["dev", "main"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   PROJECT_NAME: ProofAcidFireCold
   SOLUTION_FILE: ProofAcidFireCold.sln
   PROJECT_PATH: ProofAcidFireCold.csproj
-  DOTNET_VERSION: "4.6.2"
+  DOTNET_VERSION: "8.0.x"
   BUILD_CONFIGURATION: Release
 
 permissions:
@@ -18,11 +22,8 @@ permissions:
 
 jobs:
   build-and-pack:
-    runs-on: windows-latest
-
-    strategy:
-      matrix:
-        configuration: [Release]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     outputs:
       version: ${{ steps.version.outputs.version }}
@@ -34,24 +35,34 @@ jobs:
       - name: Get version from package.xml
         id: version
         run: |
-          echo "::set-output name=version::$(grep -o '<version>[^<]*' package.xml | sed 's/<version>//')"
+          echo "version=$(grep -o '<version>[^<]*' package.xml | sed 's/<version>//')" >> $GITHUB_OUTPUT
 
-      # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
-      - name: Setup MSBuild.exe
-        uses: microsoft/setup-msbuild@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          cache: true
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.SOLUTION_FILE }}
 
       - name: Build solution
-        run: msbuild ${{ env.SOLUTION_FILE }} /p:Configuration=${{ env.BUILD_CONFIGURATION }} /p:Platform="Any CPU" /p:TargetFrameworkVersion=v${{ env.DOTNET_VERSION }}
+        run: dotnet build ${{ env.SOLUTION_FILE }} --configuration ${{ env.BUILD_CONFIGURATION }} --no-restore
 
       - name: Publish Artifact
+        run: dotnet publish ${{ env.PROJECT_PATH }} --configuration ${{ env.BUILD_CONFIGURATION }} --output ./publish --no-build
+
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.PROJECT_NAME }}-${{ steps.version.outputs.version }}
-          path: bin/${{ env.BUILD_CONFIGURATION }}/
+          path: ./publish/
 
   release:
     needs: build-and-pack
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout code
@@ -68,7 +79,7 @@ jobs:
         id: ziphash
         run: |
           zip -r "${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip" "${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}"
-          echo "::set-output name=sha256::$(sha256sum ${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip | awk '{ print $1 }')"
+          echo "sha256=$(sha256sum ${{ env.PROJECT_NAME }}-${{ needs.build-and-pack.outputs.version }}.zip | awk '{ print $1 }')" >> $GITHUB_OUTPUT
 
       - name: Upload release
         uses: softprops/action-gh-release@v2
