@@ -14,7 +14,7 @@ env:
   PROJECT_NAME: ProofAcidFireCold
   SOLUTION_FILE: ProofAcidFireCold.sln
   PROJECT_PATH: ProofAcidFireCold.csproj
-  DOTNET_VERSION: "8.0.x"
+  DOTNET_VERSION: "10.0.x"
   BUILD_CONFIGURATION: Release
 
 permissions:
