@@ -85,7 +85,7 @@ Config path: `Elin/BepInEx/config/com.travellerse.plugins.ProofAcidFireCold.cfg`
 
 ## Basic Protections
 ProofAcid = true    # Acid immunity
-ProofFire = true    # Fire immunity 
+ProofFire = true    # Fire immunity
 ProofCold = true    # Freezing prevention
 ProofSteal = true   # Steal prevention
 
@@ -137,7 +137,7 @@ DisableBlanketsCost = ture # When true, blankets do not consume
 
 ## 基本保護
 ProofAcid = true    # 耐酸特性
-ProofFire = true    # 耐火特性 
+ProofFire = true    # 耐火特性
 ProofCold = true    # 耐寒特性
 ProofSteal = true   # 盗難防止
 
