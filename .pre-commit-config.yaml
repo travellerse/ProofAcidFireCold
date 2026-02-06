@@ -1,3 +1,7 @@
+exclude: ".venv|CHANGELOG.md|CONTRIBUTORS.md"
+default_stages: [pre-commit]
+minimum_pre_commit_version: "3.2.0"
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
@@ -19,7 +23,14 @@ repos:
     hooks:
       - id: dotnet-format
         name: dotnet format
-        entry: dotnet format ./ProofAcidFireCold.sln --include
+        entry: dotnet format ./ProofAcidFireCold.sln --include "$@"
         language: system
         files: \.(cs|csproj|sln)$
         pass_filenames: true
+
+default_install_hook_types: [pre-commit, prepare-commit-msg]
+ci:
+  autofix_commit_msg: "chore: Auto fix by pre-commit hooks [skip changelog]"
+  autofix_prs: true
+  autoupdate_commit_msg: "chore: Auto update by pre-commit hooks [skip changelog]"
+  skip: [dotnet-format]
