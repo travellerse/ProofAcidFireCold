@@ -12,6 +12,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 
     <OutputPath>bin\$(Configuration)\</OutputPath>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
   <ItemGroup>
