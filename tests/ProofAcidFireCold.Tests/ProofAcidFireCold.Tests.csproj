@@ -1,0 +1,59 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net10.0;net462</TargetFrameworks>
+    <IsPackable>false</IsPackable>
+    <LangVersion>10.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="SemanticVersioning" Version="2.0.2" />
+    <PackageReference Include="xunit" Version="2.6.2" />
+    <PackageReference Include="xunit.runner.console" Version="2.6.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.4">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Moq" Version="4.20.70" />
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ProofAcidFireCold.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- BepInEx Core DLLs from Steam installation -->
+    <Reference Include="0Harmony">
+      <HintPath>/home/trave/.local/share/Steam/steamapps/common/Elin/BepInEx/core/0Harmony.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="BepInEx.Core">
+      <HintPath>/home/trave/.local/share/Steam/steamapps/common/Elin/BepInEx/core/BepInEx.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MonoMod.RuntimeDetour">
+      <HintPath>/home/trave/.local/share/Steam/steamapps/common/Elin/BepInEx/core/MonoMod.RuntimeDetour.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MonoMod.Utils">
+      <HintPath>/home/trave/.local/share/Steam/steamapps/common/Elin/BepInEx/core/MonoMod.Utils.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+
+    <!-- Game DLLs from Steam installation -->
+    <Reference Include="Assembly-CSharp">
+      <HintPath>/home/trave/.local/share/Steam/steamapps/common/Elin/Elin_Data/Managed/Assembly-CSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Elin">
+      <HintPath>/home/trave/.local/share/Steam/steamapps/common/Elin/Elin_Data/Managed/Elin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>

@@ -27,6 +27,8 @@
 
 配置文件路径：`Elin/BepInEx/config/com.travellerse.plugins.ProofAcidFireCold.cfg`
 
+**🔄 支持运行时热重载** - 无需重启游戏，修改配置文件后自动生效
+
 ```ini
 [ProofAcidFireCold]
 # 是否启用特性（true=启用，false=禁用）
@@ -40,7 +42,69 @@ ProofSteal = true   # 防盗特性
 ## 特殊规则
 MeatOnMapProofFire = false # 设为true时地图火元素无法烤肉
 GarbageProofFire = false   # 设为true时垃圾无法燃烧
-DisableBlanketsCost = ture # 设为true时毛毯不消耗
+DisableBlanketsCost = true # 设为true时毛毯不消耗
+```
+
+## 架构说明
+
+Mod采用现代化模块化架构：
+
+```
+ProofAcidFireCold/
+├── src/
+│   ├── Plugin.cs              # 主插件入口
+│   ├── Configuration/
+│   │   └── ModConfig.cs       # 配置管理（支持热重载）
+│   ├── Patches/
+│   │   ├── AcidProofPatch.cs  # 酸性免疫补丁
+│   │   ├── FireProofPatch.cs  # 火焰免疫补丁
+│   │   ├── ColdProofPatch.cs  # 冰冻免疫补丁
+│   │   ├── StealProofPatch.cs # 偷窃免疫补丁
+│   │   └── BlanketCostPatch.cs# 毛毯成本补丁
+│   ├── Constants/
+│   │   └── GameConstants.cs   # 游戏常量定义
+│   └── Utils/
+│       └── PatchManager.cs    # 动态补丁管理器
+└── tests/
+    └── ProofAcidFireCold.Tests/ # 单元测试
+```
+
+### 技术特性
+
+- ✅ **运行时热重载**: 修改配置即时生效，无需重启
+- ✅ **动态补丁管理**: Harmony补丁可动态启用/禁用
+- ✅ **完整错误处理**: 所有补丁包含异常处理，不影响游戏稳定性
+- ✅ **详细日志记录**: 使用分级日志（Info/Debug/Error）
+- ✅ **单元测试**: 包含常量、配置、补丁管理器测试
+
+## 开发指南
+
+### 构建要求
+
+- .NET SDK 8.0+
+- C# 10.0
+- BepInEx 5.x
+- Harmony 2.x
+
+### 构建步骤
+
+```bash
+# 克隆仓库
+git clone https://github.com/travellerse/ProofAcidFireCold.git
+cd ProofAcidFireCold
+
+# 构建Release版本
+dotnet build --configuration Release
+
+# 输出位置
+# bin/Release/net462/ProofAcidFireCold.dll
+```
+
+### 安装到游戏
+
+```bash
+# 复制到BepInEx插件目录
+cp bin/Release/net462/ProofAcidFireCold.dll "<游戏路径>/BepInEx/plugins/"
 ```
 
 ## 兼容性
@@ -79,6 +143,8 @@ This mod adds following protections to in-game items:
 
 Config path: `Elin/BepInEx/config/com.travellerse.plugins.ProofAcidFireCold.cfg`
 
+**🔄 Runtime Hot Reload Supported** - Changes apply automatically without restart
+
 ```ini
 [ProofAcidFireCold]
 # Toggle features (true=enable, false=disable)
@@ -92,7 +158,69 @@ ProofSteal = true   # Steal prevention
 ## Special Rules
 MeatOnMapProofFire = false # When true, disable meat roasting by map fire
 GarbageProofFire = false   # When true, disable garbage burning
-DisableBlanketsCost = ture # When true, blankets do not consume
+DisableBlanketsCost = true # When true, blankets do not consume
+```
+
+## Architecture
+
+The mod uses a modern modular architecture:
+
+```
+ProofAcidFireCold/
+├── src/
+│   ├── Plugin.cs              # Main plugin entry
+│   ├── Configuration/
+│   │   └── ModConfig.cs       # Config manager (hot reload)
+│   ├── Patches/
+│   │   ├── AcidProofPatch.cs  # Acid immunity patch
+│   │   ├── FireProofPatch.cs  # Fire immunity patch
+│   │   ├── ColdProofPatch.cs  # Cold immunity patch
+│   │   ├── StealProofPatch.cs # Steal immunity patch
+│   │   └── BlanketCostPatch.cs# Blanket cost patch
+│   ├── Constants/
+│   │   └── GameConstants.cs   # Game constants
+│   └── Utils/
+│       └── PatchManager.cs    # Dynamic patch manager
+└── tests/
+    └── ProofAcidFireCold.Tests/ # Unit tests
+```
+
+### Technical Features
+
+- ✅ **Runtime Hot Reload**: Config changes apply instantly
+- ✅ **Dynamic Patch Management**: Harmony patches can be toggled at runtime
+- ✅ **Comprehensive Error Handling**: All patches include exception handling
+- ✅ **Detailed Logging**: Uses tiered logging (Info/Debug/Error)
+- ✅ **Unit Tests**: Includes tests for constants, config, and patch manager
+
+## Development Guide
+
+### Build Requirements
+
+- .NET SDK 8.0+
+- C# 10.0
+- BepInEx 5.x
+- Harmony 2.x
+
+### Build Steps
+
+```bash
+# Clone repository
+git clone https://github.com/travellerse/ProofAcidFireCold.git
+cd ProofAcidFireCold
+
+# Build Release version
+dotnet build --configuration Release
+
+# Output location
+# bin/Release/net462/ProofAcidFireCold.dll
+```
+
+### Install to Game
+
+```bash
+# Copy to BepInEx plugins directory
+cp bin/Release/net462/ProofAcidFireCold.dll "<game_path>/BepInEx/plugins/"
 ```
 
 ## Compatibility
@@ -131,6 +259,8 @@ DisableBlanketsCost = ture # When true, blankets do not consume
 
 設定ファイル：`Elin/BepInEx/config/com.travellerse.plugins.ProofAcidFireCold.cfg`
 
+**🔄 ランタイムホットリロード対応** - 再起動不要で設定変更が即座に反映
+
 ```ini
 [ProofAcidFireCold]
 # 機能制御（true=有効，false=無効）
@@ -144,7 +274,7 @@ ProofSteal = true   # 盗難防止
 ## 特殊規則
 MeatOnMapProofFire = false # true時マップ火元素で肉焼不可
 GarbageProofFire = false   # true時ゴミ燃焼不可
-DisableBlanketsCost = ture # true時毛布消費無効
+DisableBlanketsCost = true # true時毛布消費無効
 ```
 
 ## 互換性
